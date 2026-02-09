@@ -1,0 +1,97 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Simple user API with GORM + MySQL",
+    "title": "Gin User API",
+    "version": "1.0"
+  },
+  "host": "localhost:8080",
+  "basePath": "/",
+  "schemes": ["http"],
+  "paths": {
+    "/users": {
+      "get": {
+        "tags": ["users"],
+        "summary": "List users",
+        "parameters": [
+          {"name": "page", "in": "query", "type": "integer", "format": "int32"},
+          {"name": "limit", "in": "query", "type": "integer", "format": "int32"}
+        ],
+        "responses": {
+          "200": {"description": "OK", "schema": {"$ref": "#/definitions/UsersListResponse"}},
+          "400": {"description": "Bad Request"},
+          "500": {"description": "Internal Server Error"}
+        }
+      },
+      "post": {
+        "tags": ["users"],
+        "summary": "Create user",
+        "parameters": [
+          {"name": "user", "in": "body", "required": true, "schema": {"$ref": "#/definitions/User"}}
+        ],
+        "responses": {"201": {"description": "Created", "schema": {"$ref": "#/definitions/User"}}, "400": {"description": "Bad Request"}}
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "tags": ["users"],
+        "summary": "Get user by ID",
+        "parameters": [{"name": "id", "in": "path", "required": true, "type": "integer", "format": "int64"}],
+        "responses": {"200": {"description": "OK", "schema": {"$ref": "#/definitions/User"}}, "404": {"description": "Not Found"}}
+      },
+      "put": {
+        "tags": ["users"],
+        "summary": "Update user",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "type": "integer", "format": "int64"},
+          {"name": "user", "in": "body", "required": true, "schema": {"$ref": "#/definitions/User"}}
+        ],
+        "responses": {"200": {"description": "OK", "schema": {"$ref": "#/definitions/User"}}, "400": {"description": "Bad Request"}}
+      },
+      "patch": {
+        "tags": ["users"],
+        "summary": "Patch user",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "type": "integer", "format": "int64"},
+          {"name": "user", "in": "body", "required": true, "schema": {"$ref": "#/definitions/UserPatch"}}
+        ],
+        "responses": {"200": {"description": "OK", "schema": {"$ref": "#/definitions/User"}}, "400": {"description": "Bad Request"}}
+      },
+      "delete": {
+        "tags": ["users"],
+        "summary": "Delete user",
+        "parameters": [{"name": "id", "in": "path", "required": true, "type": "integer", "format": "int64"}],
+        "responses": {"204": {"description": "No Content"}, "404": {"description": "Not Found"}}
+      }
+    }
+  },
+  "definitions": {
+    "User": {
+      "type": "object",
+      "properties": {
+        "id": {"type": "integer", "format": "int64", "example": 1},
+        "name": {"type": "string", "example": "Alice"},
+        "email": {"type": "string", "example": "alice@example.com"}
+      }
+    },
+    "UsersListResponse": {
+      "type": "object",
+      "properties": {
+        "data": {"type": "array", "items": {"$ref": "#/definitions/User"}},
+        "page": {"type": "integer", "example": 1},
+        "limit": {"type": "integer", "example": 20},
+        "total": {"type": "integer", "example": 100},
+        "total_pages": {"type": "integer", "example": 5},
+        "next": {"type": "string", "example": "/users?page=2&limit=20"},
+        "prev": {"type": "string", "example": "/users?page=1&limit=20"}
+      }
+    },
+    "UserPatch": {
+      "type": "object",
+      "properties": {
+        "name": {"type": "string"},
+        "email": {"type": "string"}
+      }
+    }
+  }
+}
